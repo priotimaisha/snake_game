@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:async';
 
-Run; | Debug;
 void main() => runApp(MyApp());
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 class SnakeGame extends StatefulWidget {
   @override
   _SnakeGameState createState() => _SnakeGameState();
@@ -24,10 +25,10 @@ class _SnakeGameState extends State<SnakeGame> {
   final randomGen = Random();
 
   var snake = [
-    [0,1],
-    [0,0]
+    [0, 1],
+    [0, 0]
   ];
-  var food = [0,2];
+  var food = [0, 2];
   var direction = 'up';
   var isPlaying = false;
 
@@ -35,22 +36,23 @@ class _SnakeGameState extends State<SnakeGame> {
     const duration = Duration(milliseconds: 300);
 
     snake = [
-      [(squaresPerRow / 2).floor(),(squaresPerCol / 2).floor()]
+      [(squaresPerRow / 2).floor(), (squaresPerCol / 2).floor()]
     ];
-    snake.add([snake.first[0], snake.first[1]-1]); //snake body
+    snake.add([snake.first[0], snake.first[1] - 1]); //snake body
 
     createFood();
 
     isPlaying = true;
-    Timer.periodic(duration, (Timer timer){
+    Timer.periodic(duration, (Timer timer) {
       moveSnake();
       if (checkGameOver()) {
         timer.cancel();
         endGame();
       }
-  });
+    });
   }
-  void moveSnake(){
+
+  void moveSnake() {
     setState(() {
       switch (direction) {
         case 'up':
@@ -67,26 +69,27 @@ class _SnakeGameState extends State<SnakeGame> {
           break;
       }
 
-  if (snake.first[0] != food[0] || snake.first[1] != food[1]){
-    snake.removeLast();
-    } else {
-    createFood();
-    }
-  );
+      if (snake.first[0] != food[0] || snake.first[1] != food[1]) {
+        snake.removeLast();
+      } else {
+        createFood();
+      }
+    });
   }
-  void createFood(){
+
+  void createFood() {
     food = [
       randomGen.nextInt(squaresPerRow),
       randomGen.nextInt(squaresPerCol),
     ];
   }
+
   bool checkGameOver() {
-    if (!isPlaying
-        || snake.first[1] < 0
-        || snake.first[1] >= squaresPerCol
-        || snake.first[0] < 0
-        || snake.first[0] > squaresPerRow
-    ) {
+    if (!isPlaying ||
+        snake.first[1] < 0 ||
+        snake.first[1] >= squaresPerCol ||
+        snake.first[0] < 0 ||
+        snake.first[0] > squaresPerRow) {
       return true;
     }
     for (var i = 1; 1 < snake.length; ++i) {
@@ -94,58 +97,59 @@ class _SnakeGameState extends State<SnakeGame> {
         return true;
       }
     }
-      return false;
+    return false;
   }
 
   void endGame() {
-      isPlaying = false;
+    isPlaying = false;
 
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Game Over'),
-              content: Text(
-                'Score: ${snake.length - 2}',
-                style: TextStyle(fontSize: 20),
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Game Over'),
+            content: Text(
+              'Score: ${snake.length - 2}',
+              style: TextStyle(fontSize: 20),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Close'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Close'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          }
-      );
+            ],
+          );
+        });
   }
 
-Widget bulid(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
     return Scaffold(
       backgroundColor: Colors.black,
       body: Column(
         children: <Widget>[
           Expanded(
-              child: GestureDetector(
-          onVerticalDragUpdate: (details){
-            if(direction != 'up' && details.delta.dy > 0) {
-              direction = 'down';
-            } else if (direction != 'down' && details.delta.dy < 0) {
-              direction = 'up';
-            }
-          },
-           onHorizontalDragUpdate: (details) {
-             if (direction != 'left' && details.delta.dx > 0) {
-               direction = 'right';
-             } else if (direction != 'right' && details.delta.dx < 0) {
-               direction = 'left';
-             }
-           },
-                child: AspectRatio(
-                  aspectRatio: squaresPerRow / (squaresPerCol + 5),
-                  child: GridView.builder(
+            child: GestureDetector(
+              onVerticalDragUpdate: (details) {
+                if (direction != 'up' && details.delta.dy > 0) {
+                  direction = 'down';
+                } else if (direction != 'down' && details.delta.dy < 0) {
+                  direction = 'up';
+                }
+              },
+              onHorizontalDragUpdate: (details) {
+                if (direction != 'left' && details.delta.dx > 0) {
+                  direction = 'right';
+                } else if (direction != 'right' && details.delta.dx < 0) {
+                  direction = 'left';
+                }
+              },
+              child: AspectRatio(
+                aspectRatio: squaresPerRow / (squaresPerCol + 5),
+                child: GridView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: squaresPerRow,
@@ -157,57 +161,58 @@ Widget bulid(BuildContext context) {
                       var y = (index / squaresPerRow).floor();
 
                       bool isSnakeBody = false;
-                      for (var pos in snake){
-                        if (pos[0]==x && pos[1]== y){
+                      for (var pos in snake) {
+                        if (pos[0] == x && pos[1] == y) {
                           isSnakeBody = true;
                           break;
+                        }
                       }
-                      }
-                      if (snake.first[0]== x && snake.first[1]==y){
+                      if (snake.first[0] == x && snake.first[1] == y) {
                         color = Colors.green;
-                      }
-                      else if (isSnakeBody){
+                      } else if (isSnakeBody) {
                         color = Colors.green[200];
-                      } else if (food[0]== x && food[1] == y){
+                      } else if (food[0] == x && food[1] == y) {
                         color = Colors.red;
                       } else {
                         color = Colors.grey[800];
                       }
                       return Container(
-                      margin: EdgeInsets.all(1),
-                      decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                      ),
+                        margin: EdgeInsets.all(1),
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                        ),
                       );
-                    }
-                  ),
-                ),
+                    }),
               ),
-    ),
-   Padding(padding: EdgeInsets.only(bottom: 20),child: Row(
-              mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+            ),
+          ),
+          Padding(
+              padding: EdgeInsets.only(bottom: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   FlatButton(
-                  color: isPlaying ? Colors.red : Colors.blue,
-                child: Text(
-                isPlaying ? 'End': 'Start',
-                style: fontStyle,
-                ),
-                onPressed: (){
-                if (isPlaying) {
-                isPlaying = false;
-                } else {
-                startGame();
-                }
-                  }),
-  Text(
-                  'Score: ${snake.length - 2}',
-    style: fontStyle,
-                ),
+                      color: isPlaying ? Colors.red : Colors.blue,
+                      child: Text(
+                        isPlaying ? 'End' : 'Start',
+                        style: fontStyle,
+                      ),
+                      onPressed: () {
+                        if (isPlaying) {
+                          isPlaying = false;
+                        } else {
+                          startGame();
+                        }
+                      }),
+                  Text(
+                    'Score: ${snake.length - 2}',
+                    style: fontStyle,
+                  ),
                 ],
               )),
-            ],
-          ),
-      );
-
+        ],
+      ),
+    );
+  }
+}
